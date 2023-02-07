@@ -34,7 +34,7 @@ class HeaderFooterPDFCmd(BasePDFCmd):
         self.content_function = content_function
 
     def _execute(self) -> None:
-        logger.info(f"Creating header and footer pdf file: {self.output_files}.")
+        logger.info(f"Creating page numbers and titles in PDF file: {self.output_files}.")
 
         self.create_pdf_text_pages()
 

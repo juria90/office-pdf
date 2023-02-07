@@ -8,7 +8,7 @@ from typing import List
 from langdetect import detect  # type: ignore
 
 from command.base_pdf_cmd import InchesToPoint  # type: ignore
-from command.access_pdf_cmd import AccessPDFCmd, PrintoutConfig
+from command.access_pdf_cmd import AccessPDFCmd, PrintConfig
 from command.hf_pdf_cmd import KOREAN_FONT, HeaderFooterPDFCmd, TextAlign
 from command.impose_pdf_cmd import ImposePDFCmd
 from command.merge_content_pdf_cmd import MergeContentPDFCmd
@@ -28,15 +28,13 @@ def create_emc_booklet():
     # Generate family/personal contact pdfs from address.mdb
     mdb_filename = str(output_dir / "address.mdb")
     printout_configs = [
-        PrintoutConfig(output_filename=str(output_dir / "0Pastor.pdf"), report="FAMILY-SUM", query="PMasterAnnointed", order_by="P.SID"),
-        PrintoutConfig(
-            output_filename=str(output_dir / "1KM-Family.pdf"), report="FAMILY-SUM", query="AddressMaster-KM", order_by="P.NAME"
-        ),
-        PrintoutConfig(
+        PrintConfig(output_filename=str(output_dir / "0Pastor.pdf"), report="FAMILY-SUM", query="PMasterAnnointed", order_by="P.SID"),
+        PrintConfig(output_filename=str(output_dir / "1KM-Family.pdf"), report="FAMILY-SUM", query="AddressMaster-KM", order_by="P.NAME"),
+        PrintConfig(
             output_filename=str(output_dir / "2EM-Family.pdf"), report="FAMILY-SUM", query="AddressMaster-EM", order_by="SID DESC, ENAME"
         ),
-        PrintoutConfig(output_filename=str(output_dir / "3EM-Single.pdf"), report="Single", query="EM-SINGLE", order_by="P.NAME"),
-        PrintoutConfig(output_filename=str(output_dir / "4YG.pdf"), report="Single", query="YG", order_by="P.NAME"),
+        PrintConfig(output_filename=str(output_dir / "3EM-Single.pdf"), report="Single", query="EM-SINGLE", order_by="P.NAME"),
+        PrintConfig(output_filename=str(output_dir / "4YG.pdf"), report="Single", query="YG", order_by="P.NAME"),
     ]
     accesscmd = AccessPDFCmd(mdb_filename, printout_configs)
     accesscmd.execute()
@@ -92,8 +90,6 @@ def create_emc_booklet():
             content_list.append(content)
 
         return content_list
-
-    logger.info(f"Adding page numbers and titles.")
 
     num_pages = get_num_pages(master_pdf_file)
     page_size = (statement_x, statement_y)

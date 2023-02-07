@@ -9,7 +9,7 @@ from thirdparty.access_win32 import App as AccessApp
 logger = logging.getLogger(__name__)
 
 
-class PrintoutConfig:
+class PrintConfig:
     def __init__(self, report: str, query: str, order_by: str, output_filename: str):
         self.report = report
         self.query = query
@@ -18,7 +18,7 @@ class PrintoutConfig:
 
 
 class AccessPDFCmd(BasePDFCmd):
-    def __init__(self, mdb_filename: str, printout_configs: List[PrintoutConfig]):
+    def __init__(self, mdb_filename: str, printout_configs: List[PrintConfig]):
         super().__init__()
 
         self.mdb_filename = mdb_filename
