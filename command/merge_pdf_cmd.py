@@ -39,7 +39,7 @@ class MergePDFCmd(BasePDFCmd):
         self.pdf_ranges = pdf_ranges
 
     def _execute(self) -> None:
-        logger.info(f"Combining pdf files to {self.output_files}.")
+        logger.info(f"Combining pdf files to {self.output_file}.")
 
         writer = PdfWriter()
 
@@ -74,4 +74,4 @@ class MergePDFCmd(BasePDFCmd):
 
         # write result
         if len(writer.pages):
-            writer.write(self.output_files)
+            writer.write(self.output_file)

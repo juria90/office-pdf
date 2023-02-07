@@ -34,12 +34,12 @@ class HeaderFooterPDFCmd(BasePDFCmd):
         self.content_function = content_function
 
     def _execute(self) -> None:
-        logger.info(f"Creating page numbers and titles in PDF file: {self.output_files}.")
+        logger.info(f"Creating page numbers and titles in PDF file: {self.output_file}.")
 
         self.create_pdf_text_pages()
 
     def create_pdf_text_pages(self):
-        c = canvas.Canvas(self.output_files)
+        c = canvas.Canvas(self.output_file)
         # logger.info(f"getAvailableFonts: {c.getAvailableFonts()}")
         for page_no in range(self.num_pages):
             c.setPageSize(self.page_size)

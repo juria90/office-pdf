@@ -18,7 +18,7 @@ class MergeContentPDFCmd(BasePDFCmd):
         self.input_files = input_files
 
     def _execute(self) -> None:
-        logger.info(f"Merging contents to pdf file: {self.output_files}.")
+        logger.info(f"Merging contents to pdf file: {self.output_file}.")
 
         self.merge_pdf_content()
 
@@ -43,4 +43,4 @@ class MergeContentPDFCmd(BasePDFCmd):
 
         # write result
         if len(writer.pages):
-            writer.write(self.output_files)
+            writer.write(self.output_file)

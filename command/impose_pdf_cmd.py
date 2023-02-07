@@ -27,9 +27,9 @@ class ImposePDFCmd(BasePDFCmd):
         self.folds = folds
 
     def _execute(self) -> None:
-        logger.info(f"Creating imposed pdf file: {self.output_files}.")
+        logger.info(f"Creating imposed pdf file: {self.output_file}.")
 
         self._impose()
 
     def _impose(self):
-        saddle.impose(self.input_files, self.output_files, folds=self.folds)
+        saddle.impose(self.input_files, self.output_file, folds=self.folds)

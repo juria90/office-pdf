@@ -34,7 +34,7 @@ def create_emc_booklet():
             output_filename=str(output_dir / "2EM-Family.pdf"), report="FAMILY-SUM", query="AddressMaster-EM", order_by="SID DESC, ENAME"
         ),
         PrintConfig(output_filename=str(output_dir / "3EM-Single.pdf"), report="Single", query="EM-SINGLE", order_by="P.NAME"),
-        PrintConfig(output_filename=str(output_dir / "4YG.pdf"), report="Single", query="YG", order_by="P.NAME"),
+        PrintConfig(output_filename=str(output_dir / "4YG-Single.pdf"), report="Single", query="YG", order_by="P.NAME"),
     ]
     accesscmd = AccessPDFCmd(mdb_filename, printout_configs)
     accesscmd.execute()
@@ -99,13 +99,13 @@ def create_emc_booklet():
     # numberingcmd.execute()
 
     # merge content of master and header/foot pdf files.
-    contentcmd = MergeContentPDFCmd("", [master_pdf_file, hfcmd.output_files])
+    contentcmd = MergeContentPDFCmd("", [master_pdf_file, hfcmd.output_file])
     contentcmd.execute()
 
     # Do saddle stitch imposition for final pdf.
     output_imposed_filename = str(output_dir / "2023 신앙생활요람-imp.pdf")
     folds = "h"  # fold horz one time to produce 1x2 saddle
-    imposecmd = ImposePDFCmd(output_imposed_filename, [contentcmd.output_files], folds)
+    imposecmd = ImposePDFCmd(output_imposed_filename, [contentcmd.output_file], folds)
     imposecmd.execute()
 
 

@@ -2,7 +2,7 @@ import logging
 import os
 from typing import List
 
-from command.base_pdf_cmd import BasePDFCmd
+from command.base_pdf_cmd import BaseMultiPDFCmd
 from thirdparty.access_win32 import App as AccessApp
 
 
@@ -17,7 +17,7 @@ class PrintConfig:
         self.output_filename = output_filename
 
 
-class AccessPDFCmd(BasePDFCmd):
+class AccessPDFCmd(BaseMultiPDFCmd):
     def __init__(self, mdb_filename: str, printout_configs: List[PrintConfig]):
         super().__init__()
 
