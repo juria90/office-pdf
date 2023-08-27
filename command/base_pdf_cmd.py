@@ -1,7 +1,7 @@
 import errno
 import os
 import tempfile
-from typing import List, Union
+from typing import List
 
 
 def InchesToPoint(i: float) -> int:

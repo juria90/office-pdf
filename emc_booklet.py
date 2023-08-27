@@ -12,7 +12,7 @@ from command.access_pdf_cmd import AccessPDFCmd, PrintConfig
 from command.hf_pdf_cmd import KOREAN_FONT, HeaderFooterPDFCmd, TextAlign
 from command.impose_pdf_cmd import ImposePDFCmd
 from command.merge_content_pdf_cmd import MergeContentPDFCmd
-from command.merge_pdf_cmd import MergePDFCmd, MergePDFPages
+from command.merge_pdf_cmd import MergePDFCmd, FilenamePages
 from command.word_pdf_cmd import WordPDFCmd
 
 from init_log import init_log
@@ -51,10 +51,10 @@ def create_emc_booklet():
     contact_pdf_files.insert(0, str(output_dir / "blankpage.pdf"))
     contact_pdf_files.insert(1, str(output_dir / "2023 주소록-내지.pdf"))
     contact_pdf_files.insert(2, str(output_dir / "blankpage.pdf"))
-    pdf_ranges: List[MergePDFPages] = []
-    pdf_ranges.append(MergePDFPages(master_pdf_file, [(0, address_book_start_page_no)]))
-    pdf_ranges.append(MergePDFPages(contact_pdf_files, None))
-    pdf_ranges.append(MergePDFPages(master_pdf_file, [(address_book_start_page_no + 2, 0)]))
+    pdf_ranges: List[FilenamePages] = []
+    pdf_ranges.append(FilenamePages(master_pdf_file, [(0, address_book_start_page_no)]))
+    pdf_ranges.append(FilenamePages(contact_pdf_files, None))
+    pdf_ranges.append(FilenamePages(master_pdf_file, [(address_book_start_page_no + 2, 0)]))
     mergecmd = MergePDFCmd(master_pdf_file, pdf_ranges)
     mergecmd.execute()
 
