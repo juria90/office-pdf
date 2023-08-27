@@ -1,5 +1,7 @@
+import argparse
 from enum import IntEnum
 import logging
+import os
 from typing import List, Tuple, Union
 
 from PyPDF2 import PdfWriter
@@ -18,25 +20,25 @@ class FrontBackCover(IntEnum):
     BlankBoth = 3
 
 
-class MergePDFPages:
+class FilenamePages:
     def __init__(
         self,
-        filenames: Union[str, List[str]],
+        filename: str,
         ranges: Union[None, List[Tuple[int, int]]],
         front_cover: FrontBackCover = FrontBackCover.PrintBoth,
         back_cover: FrontBackCover = FrontBackCover.PrintBoth,
     ) -> None:
-        self.filenames: Union[str, List[str]] = filenames
+        self.filename: str = filename
         self.ranges: Union[None, List[Tuple[int, int]]] = ranges
         self.front_cover = front_cover
         self.back_cover = back_cover
 
 
 class MergePDFCmd(BasePDFCmd):
-    def __init__(self, output_filename: str, pdf_ranges: List[MergePDFPages]):
+    def __init__(self, output_filename: str, filename_pages_list: List[FilenamePages]):
         super().__init__(output_filename)
 
-        self.pdf_ranges = pdf_ranges
+        self.filename_pages_list = filename_pages_list
 
     def _execute(self) -> None:
         logger.info(f"Combining pdf files to {self.output_file}.")
@@ -64,14 +66,51 @@ class MergePDFCmd(BasePDFCmd):
             return insert_at
 
         insert_at = 0
-        for r in self.pdf_ranges:
-            if isinstance(r.filenames, list):
-                for filename in r.filenames:
-                    insert_at = insert_page_range(writer, insert_at, filename, r.ranges)
-            elif isinstance(r.filenames, str):
-                filename = r.filenames
-                insert_at = insert_page_range(writer, insert_at, filename, r.ranges)
+        for r in self.filename_pages_list:
+            insert_at = insert_page_range(writer, insert_at, r.filename, r.ranges)
 
         # write result
         if len(writer.pages):
             writer.write(self.output_file)
+
+
+def _construct_argparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output", required=True, help="Output filename.")
+    parser.add_argument("input_files", nargs="+", help="list of input files with optional page range. i.e. <filename>:1-3")
+
+    return parser
+
+
+def parse_page_range(str_ranges: str) -> List[Tuple[int, int]]:
+    ranges = []
+    for str_range in str_ranges.split(","):
+        numbers = str_range.split("-")
+        mn = mx = int(numbers[0])
+        if len(numbers) > 1:
+            mx = int(numbers[1])
+        else:
+            mx = mn + 1
+
+        ranges.append((mn, mx))
+
+    return ranges
+
+
+if __name__ == "__main__":
+    parser = _construct_argparse()
+    args = parser.parse_args()
+    if args.output:
+        filename_pages_list = []
+        for filename in args.input_files:
+            d, fn = os.path.split(filename)
+            filename_pages = FilenamePages(filename, None)
+            fn_ranges = fn.split(":", maxsplit=1)
+            fn = fn_ranges[0]
+            if len(fn_ranges) > 1:
+                ranges = parse_page_range(fn_ranges[1])
+                filename_pages.ranges = ranges
+            filename_pages_list.append(filename_pages)
+
+        cmd = MergePDFCmd(args.output, filename_pages_list)
+        cmd.execute()
