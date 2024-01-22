@@ -67,7 +67,11 @@ class MergePDFCmd(BasePDFCmd):
 
         insert_at = 0
         for r in self.filename_pages_list:
-            insert_at = insert_page_range(writer, insert_at, r.filename, r.ranges)
+            if isinstance(r.filename, list):
+                for f in r.filename:
+                    insert_at = insert_page_range(writer, insert_at, f, r.ranges)
+            else:
+                insert_at = insert_page_range(writer, insert_at, r.filename, r.ranges)
 
         # write result
         if len(writer.pages):

@@ -1,4 +1,5 @@
 from argparse import Namespace
+import argparse
 import logging
 import os
 from pathlib import Path
@@ -22,11 +23,10 @@ from pdf_info import get_num_pages
 logger = logging.getLogger(__name__)
 
 
-def create_emc_booklet():
+def create_emc_booklet(mdb_filename: str, docx_filename: str):
     output_dir = Path(os.path.dirname(__file__))
 
     # Generate family/personal contact pdfs from address.mdb
-    mdb_filename = str(output_dir / "address.mdb")
     printout_configs = [
         PrintConfig(output_filename=str(output_dir / "0Pastor.pdf"), report="FAMILY-SUM", query="PMasterAnnointed", order_by="P.SID"),
         PrintConfig(output_filename=str(output_dir / "1KM-Family.pdf"), report="FAMILY-SUM", query="AddressMaster-KM", order_by="P.NAME"),
@@ -41,15 +41,15 @@ def create_emc_booklet():
     contact_pdf_files = accesscmd.output_files
 
     # Generate pdf from master word file.
-    docx_filename = str(Path.home() / r"Dropbox/EMC/일반행정/2023/2023 신앙생활요람.docx")
-    master_pdf_file = str(output_dir / "2023 신앙생활요람.pdf")
+    master_basename = str(Path(docx_filename).stem)
+    master_pdf_file = str(output_dir / (master_basename + ".pdf"))
     wordcmd = WordPDFCmd(docx_filename, master_pdf_file)
     wordcmd.execute()
 
     # Combine master and contact pdfs.
     address_book_start_page_no = 29
     contact_pdf_files.insert(0, str(output_dir / "blankpage.pdf"))
-    contact_pdf_files.insert(1, str(output_dir / "2023 주소록-내지.pdf"))
+    contact_pdf_files.insert(1, str(output_dir / "2024 주소록-내지.pdf"))
     contact_pdf_files.insert(2, str(output_dir / "blankpage.pdf"))
     pdf_ranges: List[FilenamePages] = []
     pdf_ranges.append(FilenamePages(master_pdf_file, [(0, address_book_start_page_no)]))
@@ -103,10 +103,25 @@ def create_emc_booklet():
     contentcmd.execute()
 
     # Do saddle stitch imposition for final pdf.
-    output_imposed_filename = str(output_dir / "2023 신앙생활요람-imp.pdf")
+    output_imposed_filename = str(output_dir / (master_basename + "-imp.pdf"))
     folds = "h"  # fold horz one time to produce 1x2 saddle
     imposecmd = ImposePDFCmd(output_imposed_filename, [contentcmd.output_file], folds)
     imposecmd.execute()
+
+
+def construct_parser() -> argparse.ArgumentParser:
+    # create the top-level parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--verbose", action="store_true", help="Increase output verbosity")
+
+    output_dir = Path(os.path.dirname(__file__))
+    mdb_filename = str(output_dir / "address.mdb")
+    parser.add_argument("--mdb-filename", default=mdb_filename, help="A filename to load EMC transactions.")
+
+    docx_filename = str(Path.home() / r"Dropbox/EMC/일반행정/2024/2024 신앙생활요람.docx")
+    parser.add_argument("--booklet-filename", default=docx_filename, help="A filename to load bank transactions.")
+
+    return parser
 
 
 if __name__ == "__main__":
@@ -115,6 +130,8 @@ if __name__ == "__main__":
         input()
         sys.argv = sys.argv[:1] + sys.argv[2:]
 
-    init_log()
+    parser = construct_parser()
+    args = parser.parse_args()
+    init_log(args.verbose)
 
-    create_emc_booklet()
+    create_emc_booklet(args.mdb_filename, args.booklet_filename)
