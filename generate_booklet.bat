@@ -8,9 +8,15 @@ mode.com con cp select=65001 > NUL
 
 setlocal
 
-set PROG_DIR=%HOMEDRIVE%%HOMEPATH%\Church\office-pdf
-set DATA_DIR=%HOMEDRIVE%%HOMEPATH%\Dropbox\EMC\일반행정\2024
-set MDB_DIR=%PROG_DIR%
+if "%COMPUTERNAME%" == "JAMESLEE-PC" (
+	set PROG_DIR=%HOMEDRIVE%%HOMEPATH%\Church\office-pdf
+	set DATA_DIR=%HOMEDRIVE%%HOMEPATH%\Dropbox\EMC\일반행정\2024
+	set MDB_DIR=%PROG_DIR%
+) else (
+	set PROG_DIR=C:\CHURCH\office-pdf
+	set DATA_DIR=D:\Documents\Dropbox\EMC\일반행정\2024
+	set MDB_DIR=C:\CHURCH\Address
+)
 
 cd /d %PROG_DIR%
 
