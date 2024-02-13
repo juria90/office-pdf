@@ -9,6 +9,8 @@ mode.com con cp select=65001 > NUL
 setlocal
 
 set PROG_DIR=%HOMEDRIVE%%HOMEPATH%\Church\office-pdf
+set DATA_DIR=%HOMEDRIVE%%HOMEPATH%\Dropbox\EMC\일반행정\2024
+set MDB_DIR=%PROG_DIR%
 
 cd /d %PROG_DIR%
 
@@ -25,8 +27,7 @@ if not exist venv\Scripts\activate.bat (
 )
 
 @echo on
-REM python emc_booklet.py --mdb-filename C:\Church\Address\address.mdb --booklet-filename C:\Users\jameslee-pc\Dropbox\EMC\일반행정\2024\2024 신앙생활요람.docx
-python emc_booklet.py --mdb-filename "C:\Users\jameslee-pc\Church\office-pdf\address.mdb" --booklet-filename "C:\Users\jameslee-pc\Dropbox\EMC\일반행정\2024\2024 신앙생활요람.docx"
+python emc_booklet.py --mdb-filename "%MDB_DIR%\address.mdb" --booklet-filename "%DATA_DIR%\2024 신앙생활요람.docx"
 
 pause
 

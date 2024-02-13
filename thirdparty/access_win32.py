@@ -169,9 +169,11 @@ class App:
         return Table(self, table_name)
 
     def print_report_as(self, report_name: str, pathname: str, format_type=AcFormat.acFormatPDF) -> None:
+        # https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/ff192065(v=office.14)
         self.access.DoCmd.OutputTo(AcOutputObjectType.acOutputReport, report_name, AcFormatMap[format_type], pathname)
 
     def print_table_as(self, table_name: str, pathname: str, format_type=AcFormat.acFormatPDF) -> None:
+        # https://learn.microsoft.com/en-us/previous-versions/office/developer/office-2010/ff192065(v=office.14)
         self.access.DoCmd.OutputTo(AcOutputObjectType.acOutputTable, table_name, AcFormatMap[format_type], pathname)
 
     def quit(self, option: AcQuitOption = AcQuitOption.acQuitSaveAll) -> None:
